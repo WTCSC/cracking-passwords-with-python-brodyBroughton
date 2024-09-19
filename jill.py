@@ -58,13 +58,13 @@ def main():
     ''' HASHING WORD LIST '''
 
     # Array for the hashed passwords from wordlist
-    hashedWordListArr = []
-
-    # Create a hash object
-    sha256_hash = hashlib.sha256()
+    hashedWordListArr = []   
 
     # For loop to go through each password in the wordlist array
     for password in wordListArr:
+
+        # Create a hash object
+        sha256_hash = hashlib.sha256()
 
         # Converts the password string to byte password
         currentBytePassword = password.encode()
@@ -80,10 +80,13 @@ def main():
 
 
 
-    ''' ITERATING THROUGH '''
+    ''' ITERATING THROUGH USER PASSWORDS AND SEPERATING THE USER HASHED PASSWORDS '''
 
     # Final cracked passwords array
     crackedPasswords = []
+
+    # Hashed user passwords array
+    hashedPasswords = []
 
     # Temporary string for passing things into cracked array
     tempStr = ''
@@ -97,17 +100,44 @@ def main():
             # Adds each letter to the temporary string
             tempStr += letter
 
+            # Remove the 'user:' from the string
+            user = user[:0] + user[1:]
+        
             # Checks if the current letter is a colon to add the names of the users
             if letter == ':':
-
+                
                 # Adds the temp string to the cracked passwords array
                 crackedPasswords.append(tempStr)
+
+                # Adds just the hashed password to the hashedPasswords array
+                hashedPasswords.append(user)
 
                 # Resets temp string
                 tempStr = ''
 
                 # Moves onto the next user
                 break
+    
+
+
+    ''' CHECKING IF A USER HASHED PASSWORD MATCHES WITH HASHED WORDLIST '''
+
+    # For loop that goes through the user hashed passwords
+    for userHash in hashedPasswords:
+        
+        user = 0
+
+        # For loop that goes through the hashed words in the hashed word list array
+        for hashWordList in hashedWordListArr:
             
+            # Finally checks if the user password hash matches up with the hashed word
+            if userHash == hashWordList:
+                
+                crackedPasswords[user] += userHash
+
+                user += 1
+                
+            
+    print(crackedPasswords)
 if __name__ == "__main__":
     main()
