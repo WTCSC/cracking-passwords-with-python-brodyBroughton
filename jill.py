@@ -121,11 +121,11 @@ def main():
 
 
     ''' CHECKING IF A USER HASHED PASSWORD MATCHES WITH HASHED WORDLIST '''
-
+    user = 0
     # For loop that goes through the user hashed passwords
     for userHash in hashedPasswords:
         
-        user = 0
+        
 
         # For loop that goes through the hashed words in the hashed word list array
         for hashWordList in hashedWordListArr:
@@ -133,11 +133,15 @@ def main():
             # Finally checks if the user password hash matches up with the hashed word
             if userHash == hashWordList:
                 
-                crackedPasswords[user] += userHash
+                unhashedPassword = wordListArr[hashedWordListArr.index(userHash)]
+                #print(unhashedPassword)
+                crackedPasswords[user] += unhashedPassword
 
                 user += 1
+
                 
+    return crackedPasswords            
             
-    print(crackedPasswords)
+    #print(crackedPasswords)
 if __name__ == "__main__":
     main()
