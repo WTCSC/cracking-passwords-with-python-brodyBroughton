@@ -18,43 +18,42 @@ def main():
 
 
     ''' PASSING CONTENTS OF PASSWORDS INTO ARRAY '''
-    try:
-        # Opening the wordlist file
-        passwordsFile = open(args.passwords, 'r')
+    
+    # Opening the wordlist file
+    passwordsFile = open(args.passwords, 'r')
+    
+    # Array for all the words in wordlist
+    passwordsListArr = []
 
-        # Array for all the words in wordlist
-        passwordsListArr = []
+    # For loop to iterate through every line in wordlist
+    for password in passwordsFile.readlines():
 
-        # For loop to iterate through every line in wordlist
-        for password in passwordsFile.readlines():
+        # Adds each word to an array and strips newline characters
+        passwordsListArr.append(password.strip())
 
-            # Adds each word to an array and strips newline characters
-            passwordsListArr.append(password.strip())
+    # Close wordlist file
+    passwordsFile.close()
 
-        # Close wordlist file
-        passwordsFile.close()
-    except FileNotFoundError:
-        print('File not found')
 
 
     ''' PASSING CONTENTS OF WORDLIST INTO ARRAY '''
-    try:
-        # Opening the wordlist file
-        wordListFile = open(args.dictionary, 'r')
 
-        # Array for all the words in wordlist
-        wordListArr = []
+    # Opening the wordlist file
+    wordListFile = open(args.dictionary, 'r')
+    
+    # Array for all the words in wordlist
+    wordListArr = []
 
-        # For loop to iterate through every line in wordlist
-        for word in wordListFile.readlines():
+    # For loop to iterate through every line in wordlist
+    for word in wordListFile.readlines():
 
-            # Adds each word to an array and strips newline characters
-            wordListArr.append(word.strip())
+        # Adds each word to an array and strips newline characters
+        wordListArr.append(word.strip())
+    
+    # Close wordlist file
+    wordListFile.close()
 
-        # Close wordlist file
-        wordListFile.close()
-    except FileNotFoundError:
-        print('File not found')
+
 
     ''' HASHING WORD LIST '''
 
