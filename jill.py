@@ -8,52 +8,53 @@ def main():
     parser = argparse.ArgumentParser(description = 'open_files')
 
     # Adding the dictionary and password to parser
-    parser.add_argument('dictionary')
-
     parser.add_argument('passwords')
+    
+    parser.add_argument('dictionary')
     
     # Parsing args
     args = parser.parse_args()
 
 
 
-    ''' PASSING CONTENTS OF WORDLIST INTO ARRAY '''
-
-    # Opening the wordlist file
-    wordListFile = open(args.dictionary, 'r')
-    
-    # Array for all the words in wordlist
-    wordListArr = []
-
-    # For loop to iterate through every line in wordlist
-    for word in wordListFile.readlines():
-
-        # Adds each word to an array and strips newline characters
-        wordListArr.append(word.strip())
-    
-    # Close wordlist file
-    wordListFile.close()
-
-
-
     ''' PASSING CONTENTS OF PASSWORDS INTO ARRAY '''
+    try:
+        # Opening the wordlist file
+        passwordsFile = open(args.passwords, 'r')
 
-    # Opening the wordlist file
-    passwordsFile = open(args.passwords, 'r')
-    
-    # Array for all the words in wordlist
-    passwordsListArr = []
+        # Array for all the words in wordlist
+        passwordsListArr = []
 
-    # For loop to iterate through every line in wordlist
-    for password in passwordsFile.readlines():
+        # For loop to iterate through every line in wordlist
+        for password in passwordsFile.readlines():
 
-        # Adds each word to an array and strips newline characters
-        passwordsListArr.append(password.strip())
+            # Adds each word to an array and strips newline characters
+            passwordsListArr.append(password.strip())
 
-    # Close wordlist file
-    passwordsFile.close()
+        # Close wordlist file
+        passwordsFile.close()
+    except FileNotFoundError:
+        print('File not found')
 
 
+    ''' PASSING CONTENTS OF WORDLIST INTO ARRAY '''
+    try:
+        # Opening the wordlist file
+        wordListFile = open(args.dictionary, 'r')
+
+        # Array for all the words in wordlist
+        wordListArr = []
+
+        # For loop to iterate through every line in wordlist
+        for word in wordListFile.readlines():
+
+            # Adds each word to an array and strips newline characters
+            wordListArr.append(word.strip())
+
+        # Close wordlist file
+        wordListFile.close()
+    except FileNotFoundError:
+        print('File not found')
 
     ''' HASHING WORD LIST '''
 
@@ -120,28 +121,35 @@ def main():
     
 
 
-    ''' CHECKING IF A USER HASHED PASSWORD MATCHES WITH HASHED WORDLIST '''
+    ''' CHECKING IF A USER HASHED PASSWORD MATCHES WITH HASHED WORDLIST 
     user = 0
-    # For loop that goes through the user hashed passwords
+    
     for userHash in hashedPasswords:
-        
-        
 
         # For loop that goes through the hashed words in the hashed word list array
         for hashWordList in hashedWordListArr:
             
             # Finally checks if the user password hash matches up with the hashed word
             if userHash == hashWordList:
-                
+                #print(user)
                 unhashedPassword = wordListArr[hashedWordListArr.index(userHash)]
-                #print(unhashedPassword)
+
                 crackedPasswords[user] += unhashedPassword
 
                 user += 1
-
-                
-    return crackedPasswords            
+    '''
+    for userHash in hashedPasswords: # For loop that goes through the user hashed passwords
+        
+        if any(userHash == hashWordList for hashWordList in hashedWordListArr): # Checks if the user hash is in the hashed word list
             
-    #print(crackedPasswords)
+            crackedPasswords[hashedPasswords.index(userHash)] += wordListArr[hashedWordListArr.index(userHash)] # Adds the unhashed user password to the cracked passwords array
+
+        else:
+
+            crackedPasswords.pop(hashedPasswords.index(userHash))# += '' # If not found, adds nothing
+            
+    for x in crackedPasswords:
+        
+        print(x)   
 if __name__ == "__main__":
     main()
