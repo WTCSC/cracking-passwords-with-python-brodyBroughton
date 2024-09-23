@@ -1,4 +1,4 @@
-import argparse, hashlib
+import argparse, hashlib, time
 
 def main():
 
@@ -9,7 +9,11 @@ def main():
     parser.add_argument('passwords') # Adding the dictionary and password to parser
     
     parser.add_argument('dictionary')
+
+    parser.add_argument('--verbose', action='store_true', help='Enable verbose output') # Adding --verbose
     
+    global args 
+
     args = parser.parse_args() # Parsing args
 
 
@@ -85,25 +89,48 @@ def main():
                 tempStr = '' # Resets temp string
                 
                 break # Moves onto the next user
-    
+
+    crackPasswords(hashedPasswords, hashedWordListArr, wordListArr, crackedPasswords)
 
 
     ''' CHECKING IF A USER HASHED PASSWORD MATCHES WITH HASHED WORDLIST '''
-    
+
+def crackPasswords(hashedPasswords, hashedWordListArr, wordListArr, crackedPasswords):
+
+    failCount = 0 # Variable to check how many passwords cant be cracked
+
     for userHash in hashedPasswords: # For loop that goes through the user hashed passwords
-        
+
         if any(userHash == hashWordList for hashWordList in hashedWordListArr): # Checks if the user hash is in the hashed word list
             
             crackedPasswords[hashedPasswords.index(userHash)] += wordListArr[hashedWordListArr.index(userHash)] # Adds the unhashed user password to the cracked passwords array
 
         else:
 
-            crackedPasswords.pop(hashedPasswords.index(userHash))# If a password isnt found, it removes that user and moves on
+            crackedPasswords.pop(hashedPasswords.index(userHash)) # If a password isnt found, it removes that user and moves on
 
+            failCount += 1 # Adds to the fail count if a password wasnt able to be cracked
 
     for x in crackedPasswords: # Finally prints out the users and their cracked passwords :)
-        
-        print(x)   
+
+        if args.verbose == True: # Checks if the verbose flag is used
+
+            print(x + " (" + str(time.time() - start_time) + " seconds)") # If the flag is used, prints out the passwords and the time it took
+
+        else:
+
+            print(x) # If not, just prints the passwords
+
+    if args.verbose == True: # Checks if the verbose flag is used
+
+        print("\n" + str(failCount) + " password(s) could not be cracked.") # Outputs how many passwords couldnt be cracked
+
+def timer(): # Timer function to start the timer
+
+    global start_time 
+
+    start_time = time.time()
 
 if __name__ == "__main__":
+    timer()
     main()
