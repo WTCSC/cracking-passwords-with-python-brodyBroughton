@@ -11,6 +11,8 @@ def main():
     parser.add_argument('dictionary')
 
     parser.add_argument('--verbose', action='store_true', help='Enable verbose output') # Adding --verbose
+
+    parser.add_argument('--algorithm', type=str, choices=['sha256', 'sha512', 'md5'], default='sha256', help='Choose different encryption methods. Default is sha256') # Adding --algorithm
     
     global args 
 
@@ -44,23 +46,15 @@ def main():
     
     wordListFile.close() # Close wordlist file
 
+    global hashedWordListArr
 
+    if args.algorithm == 'sha256':
 
-    ''' HASHING WORD LIST '''
-    
-    hashedWordListArr = [] # Array for the hashed passwords from wordlist
+        hashedWordListArr = sha256Encryptor(wordListArr)
 
-    for password in wordListArr: # For loop to go through each password in the wordlist array
+    if args.algorithm == 'sha512':
 
-        sha256_hash = hashlib.sha256() # Create a hash object
-
-        currentBytePassword = password.encode() # Converts the password string to byte password
-        
-        sha256_hash.update(currentBytePassword) # Update the hash object with bytes
-        
-        currentBytePassword = sha256_hash.hexdigest() # Get the hexadecimal representation of the hash
-        
-        hashedWordListArr.append(currentBytePassword) # Adds the current hashed password to the hashed word list array
+        hashedWordListArr = sha512Encryptor(wordListArr)
 
 
 
@@ -93,7 +87,53 @@ def main():
     crackPasswords(hashedPasswords, hashedWordListArr, wordListArr, crackedPasswords)
 
 
-    ''' CHECKING IF A USER HASHED PASSWORD MATCHES WITH HASHED WORDLIST '''
+
+''' sha256 ENCRYPT WORD LIST '''
+
+def sha256Encryptor(wordListArr):
+        
+    
+        hashedWordListArr = [] # Array for the hashed passwords from wordlist
+
+        for password in wordListArr: # For loop to go through each password in the wordlist array
+
+            sha256_hash = hashlib.sha256() # Create a hash object
+
+            currentBytePassword = password.encode() # Converts the password string to byte password
+
+            sha256_hash.update(currentBytePassword) # Update the hash object with bytes
+
+            currentBytePassword = sha256_hash.hexdigest() # Get the hexadecimal representation of the hash
+
+            hashedWordListArr.append(currentBytePassword) # Adds the current hashed password to the hashed word list array
+
+        return hashedWordListArr
+
+
+
+''' sha512 ENCRYPT WORD LIST '''
+
+def sha512Encryptor(wordListArr):
+        
+    
+        hashedWordListArr = [] # Array for the hashed passwords from wordlist
+
+        for password in wordListArr: # For loop to go through each password in the wordlist array
+
+            sha512_hash = hashlib.sha512() # Create a hash object
+
+            currentBytePassword = password.encode() # Converts the password string to byte password
+
+            sha512_hash.update(currentBytePassword) # Update the hash object with bytes
+
+            currentBytePassword = sha512_hash.hexdigest() # Get the hexadecimal representation of the hash
+
+            hashedWordListArr.append(currentBytePassword) # Adds the current hashed password to the hashed word list array
+
+        return hashedWordListArr
+
+
+''' CHECKING IF A USER HASHED PASSWORD MATCHES WITH HASHED WORDLIST '''
 
 def crackPasswords(hashedPasswords, hashedWordListArr, wordListArr, crackedPasswords):
 
