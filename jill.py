@@ -46,6 +46,10 @@ def main():
     
     wordListFile.close() # Close wordlist file
 
+
+
+    ''' INITIATING HASHING METHODS '''
+
     global hashedWordListArr
 
     if args.algorithm == 'sha256':
@@ -55,6 +59,10 @@ def main():
     if args.algorithm == 'sha512':
 
         hashedWordListArr = sha512Encryptor(wordListArr)
+
+    if args.algorithm == 'md5':
+
+        hashedWordListArr = md5Encryptor(wordListArr)
 
 
 
@@ -92,7 +100,6 @@ def main():
 
 def sha256Encryptor(wordListArr):
         
-    
         hashedWordListArr = [] # Array for the hashed passwords from wordlist
 
         for password in wordListArr: # For loop to go through each password in the wordlist array
@@ -115,11 +122,10 @@ def sha256Encryptor(wordListArr):
 
 def sha512Encryptor(wordListArr):
         
-    
         hashedWordListArr = [] # Array for the hashed passwords from wordlist
 
         for password in wordListArr: # For loop to go through each password in the wordlist array
-
+            
             sha512_hash = hashlib.sha512() # Create a hash object
 
             currentBytePassword = password.encode() # Converts the password string to byte password
@@ -133,33 +139,61 @@ def sha512Encryptor(wordListArr):
         return hashedWordListArr
 
 
+
+''' md5 ENCRYPT WORD LIST '''
+
+def md5Encryptor(wordListArr):
+        
+        hashedWordListArr = [] # Array for the hashed passwords from wordlist
+
+        for password in wordListArr: # For loop to go through each password in the wordlist array
+            
+            md5_hash = hashlib.md5() # Create a hash object
+
+            currentBytePassword = password.encode() # Converts the password string to byte password
+
+            md5_hash.update(currentBytePassword) # Update the hash object with bytes
+
+            currentBytePassword = md5_hash.hexdigest() # Get the hexadecimal representation of the hash
+
+            hashedWordListArr.append(currentBytePassword) # Adds the current hashed password to the hashed word list array
+
+        return hashedWordListArr
+
+
 ''' CHECKING IF A USER HASHED PASSWORD MATCHES WITH HASHED WORDLIST '''
 
 def crackPasswords(hashedPasswords, hashedWordListArr, wordListArr, crackedPasswords):
+    
+    indexList = [] # List for indexes for uncrackable passwords
 
     failCount = 0 # Variable to check how many passwords cant be cracked
 
     for userHash in hashedPasswords: # For loop that goes through the user hashed passwords
-
+        
         if any(userHash == hashWordList for hashWordList in hashedWordListArr): # Checks if the user hash is in the hashed word list
             
             crackedPasswords[hashedPasswords.index(userHash)] += wordListArr[hashedWordListArr.index(userHash)] # Adds the unhashed user password to the cracked passwords array
 
         else:
 
-            crackedPasswords.pop(hashedPasswords.index(userHash)) # If a password isnt found, it removes that user and moves on
+            indexList.append(hashedPasswords.index(userHash)) # Adds the index number to an index list for removal
 
             failCount += 1 # Adds to the fail count if a password wasnt able to be cracked
 
-    for x in crackedPasswords: # Finally prints out the users and their cracked passwords :)
+    for index in reversed(indexList): # Goes through index list but reversed so it can be popped easier
+        
+        crackedPasswords.pop(index) # Removes passwords that dont match
+
+    for final in crackedPasswords: # Finally prints out the users and their cracked passwords :)
 
         if args.verbose == True: # Checks if the verbose flag is used
 
-            print(x + " (" + str(time.time() - start_time) + " seconds)") # If the flag is used, prints out the passwords and the time it took
-
+            print(final + " (" + str(time.time() - start_time) + " seconds)") # If the flag is used, prints out the passwords and the time it took
+    
         else:
 
-            print(x) # If not, just prints the passwords
+            print(final) # If not, just prints the passwords
 
     if args.verbose == True: # Checks if the verbose flag is used
 
@@ -172,5 +206,7 @@ def timer(): # Timer function to start the timer
     start_time = time.time()
 
 if __name__ == "__main__":
+
     timer()
+    
     main()
